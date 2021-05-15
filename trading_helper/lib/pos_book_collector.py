@@ -15,6 +15,13 @@ class PosBookCollector(PosBookCollInterface):
         self.host = host
         self.version = version
 
+    def cal_global_perc(self, book: dict) -> dict:
+        bucket_list = book["buckets"]
+        num_buckets = len(bucket_list)
+        short = sum([float(x["shortCountPercent"]) for x in bucket_list]) / num_buckets
+        long = sum([float(x["longCountPercent"]) for x in bucket_list]) / num_buckets
+        return {"long": long, "short": short}
+
     def get_today_book(self, instrument: str) -> dict:
         url = f"{self.host}/{self.version}/instruments/{instrument}/positionBook"
         headers = {
