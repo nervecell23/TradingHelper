@@ -6,7 +6,7 @@ from typing import List
 
 class PosBookCollInterface:
     @abstractmethod
-    def get_today_book(self) -> list:
+    def get_today_book(self) -> dict:
         pass
 
 
@@ -15,7 +15,7 @@ class PosBookCollector(PosBookCollInterface):
         self.host = host
         self.version = version
 
-    def get_today_book(self, instrument: str) -> list:
+    def get_today_book(self, instrument: str) -> dict:
         url = f"{self.host}/{self.version}/instruments/{instrument}/positionBook"
         headers = {
             "Authorization": f"Bearer {os.environ['OANDA_TOKEN']}",
@@ -24,4 +24,6 @@ class PosBookCollector(PosBookCollInterface):
         r = requests.get(url, headers=headers)
 
         if r.status_code == 200:
-            pos_book = r.json()["positionBook"]
+            return r.json()["positionBook"]
+        else:
+            return {}
