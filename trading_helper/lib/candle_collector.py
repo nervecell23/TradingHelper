@@ -14,7 +14,10 @@ class CandleCollector:
         from_time = datetime.now().replace(hour=0, minute=0, second=0)
         to_time = from_time + timedelta(days=1)
         url = f"{self.host}/{self.version}/{instrument}/candles"
-        headers = {"Authorization": f"Bearer {os.environ['OANDA_TOKEN']}"}
+        headers = {
+            "Authorization": f"Bearer {os.environ['OANDA_TOKEN']}",
+            "Accept-Datetime-Format": "RFC3339",
+        }
         params = {
             "granularity": granularity,
             "from": from_time.isoformat(),
