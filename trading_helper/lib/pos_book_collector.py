@@ -1,7 +1,8 @@
 import requests
 import os
+from datetime import datetime
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 
 
 class PosBookCollInterface:
@@ -22,13 +23,18 @@ class PosBookCollector(PosBookCollInterface):
         long = sum([float(x["longCountPercent"]) for x in bucket_list]) / num_buckets
         return {"long": long, "short": short}
 
-    def get_today_book(self, instrument: str) -> dict:
+    def get_book(self, instrument: str, dt: Optional[datetime]) -> dict:
         url = f"{self.host}/{self.version}/instruments/{instrument}/positionBook"
         headers = {
             "Authorization": f"Bearer {os.environ['OANDA_TOKEN']}",
             "Accept-Datetime-Format": "RFC3339",
         }
-        r = requests.get(url, headers=headers)
+
+        if dt:
+            params = {"time": dt.isoformat()}
+            r = requests.get(url, params=params, headers=headers)
+        else:
+            r = requests.get(url, headers=headers)
 
         if r.status_code == 200:
             return r.json()["positionBook"]
