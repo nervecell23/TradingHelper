@@ -48,10 +48,11 @@ class CandleCollector:
         else:
             raise Exception(f"ERROR status: {r.status_code}\ndetail: {r.text}")
 
+    def get_today_candle(self, instrument: str, granularity: str = "D") -> Candle:
         """ """
         from_time = datetime.now().replace(hour=0, minute=0, second=0)
         to_time = from_time + timedelta(days=1)
-        url = f"{self.host}/{self.version}/{instrument}/candles"
+        url = f"{self.host}/{self.version}/instruments/{instrument}/candles"
         headers = {
             "Authorization": f"Bearer {os.environ['OANDA_TOKEN']}",
             "Accept-Datetime-Format": "RFC3339",
@@ -65,12 +66,16 @@ class CandleCollector:
         r = requests.get(url, params=params, headers=headers)
 
         if r.status_code == 200:
-            for x in r.json()["candles"]:
-                if x["complete"]:
-                    candle = Candle(
-                        open=x["mid"]["o"],
-                        high=x["mid"]["h"],
-                        low=x["mid"]["l"],
-                        close=x["mid"]["c"],
-                        starting_time=x["time"],
+            candle = r.json()["candles"][0]
+            if candle["complete"]:
+                return Candle(
+                    open=candle["mid"]["o"],
+                    high=candle["mid"]["h"],
+                    low=candle["mid"]["l"],
+                    close=candle["mid"]["c"],
+                    starting_time=candle["time"],
                     )
+            else:
+                raise Exception("Did not find complete candle")
+        else:
+            raise Exception(f"ERROR status: {r.status_code}\ndetail: {r.text}")
