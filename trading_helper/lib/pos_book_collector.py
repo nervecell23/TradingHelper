@@ -16,6 +16,26 @@ class PosBookCollector(PosBookCollInterface):
         self.host = host
         self.version = version
 
+    def get_sentiments(
+        self, instrument: str, from_dt: datetime, days: int
+    ) -> List[dict]:
+        dt_range = []
+
+        for i in range(days):
+            dt = from_dt + timedelta(days=i)
+            if dt >= datetime.now():
+                break
+            else:
+                dt_range.append(dt)
+
+        res_list = []
+
+        for dt in dt_range:
+            book = self.get_book(instrument="EUR_USD", dt=dt)
+            res_list.append(self.cal_global_perc(book))
+
+        return res_list
+
     def cal_global_perc(self, book: dict) -> dict:
         bucket_list = book["buckets"]
         num_buckets = len(bucket_list)
