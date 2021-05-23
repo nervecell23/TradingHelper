@@ -7,10 +7,10 @@ Base = declarative_base()
 class Candle(Base):
     __tablename__ = "candles"
     id = Column(Integer, primary_key=True)
-    open = (Column(Float),)
-    high = (Column(Float),)
-    low = (Column(Float),)
-    close = (Column(Float),)
+    open = Column(Float)
+    high = Column(Float)
+    low = Column(Float)
+    close = Column(Float)
     starting_time = Column(Date)
 
     def __str__(self) -> str:
