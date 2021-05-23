@@ -44,7 +44,7 @@ class PosBookCollector(PosBookCollInterface):
         long = sum([float(x["longCountPercent"]) for x in bucket_list])
         return {"time": dt, "long": long, "short": short}
 
-    def get_book(self, instrument: str, dt: Optional[datetime]) -> dict:
+    def get_book(self, instrument: str, dt: Optional[datetime] = None) -> dict:
         url = f"{self.host}/{self.version}/instruments/{instrument}/positionBook"
         headers = {
             "Authorization": f"Bearer {os.environ['OANDA_TOKEN']}",
@@ -52,7 +52,7 @@ class PosBookCollector(PosBookCollInterface):
         }
 
         if dt:
-            params = {"time": dt.isoformat()}
+            params = {"time": dt.isoformat() + ".000000Z"}
             r = requests.get(url, params=params, headers=headers)
         else:
             r = requests.get(url, headers=headers)
