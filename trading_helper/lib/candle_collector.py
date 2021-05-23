@@ -2,6 +2,7 @@ import requests
 import os
 from datetime import datetime, timedelta
 from trading_helper.models import Candle
+from typing import List
 
 
 class CandleCollector:
@@ -74,7 +75,7 @@ class CandleCollector:
                     low=candle["mid"]["l"],
                     close=candle["mid"]["c"],
                     starting_time=candle["time"],
-                    )
+                )
             else:
                 raise Exception("Did not find complete candle")
         else:
