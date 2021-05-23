@@ -37,11 +37,12 @@ class PosBookCollector(PosBookCollInterface):
         return res_list
 
     def cal_global_perc(self, book: dict) -> dict:
+        dt = datetime.strptime(book["time"], "%Y-%m-%dT%H:%M:%SZ")
         bucket_list = book["buckets"]
         num_buckets = len(bucket_list)
-        short = sum([float(x["shortCountPercent"]) for x in bucket_list]) / num_buckets
-        long = sum([float(x["longCountPercent"]) for x in bucket_list]) / num_buckets
-        return {"long": long, "short": short}
+        short = sum([float(x["shortCountPercent"]) for x in bucket_list])
+        long = sum([float(x["longCountPercent"]) for x in bucket_list])
+        return {"time": dt, "long": long, "short": short}
 
     def get_book(self, instrument: str, dt: Optional[datetime]) -> dict:
         url = f"{self.host}/{self.version}/instruments/{instrument}/positionBook"
