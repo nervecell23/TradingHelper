@@ -1,3 +1,5 @@
 env/
 .env
 *.ipynb
+notebook/
+trading_helper.egg-info/
