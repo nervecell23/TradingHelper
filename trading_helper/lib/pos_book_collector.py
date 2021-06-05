@@ -19,11 +19,13 @@ class PosBookCollector(PosBookCollInterface):
     def get_sentiments(
         self, instrument: str, from_dt: datetime, days: int
     ) -> List[dict]:
+        from_dt = from_dt.replace(hour=22, minute=0, second=0)
         dt_range = []
 
         for i in range(days):
             dt = from_dt + timedelta(days=i)
             if dt >= datetime.now():
+                dt_range.append("latest")
                 break
             else:
                 dt_range.append(dt)
@@ -31,8 +33,14 @@ class PosBookCollector(PosBookCollInterface):
         res_list = []
 
         for dt in dt_range:
-            book = self.get_book(instrument="EUR_USD", dt=dt)
-            res_list.append(self.cal_global_perc(book))
+            try:
+                if dt == "latest":
+                    book = self.get_book(instrument=instrument)
+                else:
+                    book = self.get_book(instrument=instrument, dt=dt)
+                res_list.append(self.cal_global_perc(book))
+            except Exception as e:
+                continue
 
         return res_list
 
@@ -60,4 +68,4 @@ class PosBookCollector(PosBookCollInterface):
         if r.status_code == 200:
             return r.json()["positionBook"]
         else:
-            return {}
+            raise Exception(f"Error - {r.status_code} - {r.json()}")
