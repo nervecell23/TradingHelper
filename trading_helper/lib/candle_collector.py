@@ -18,7 +18,7 @@ class CandleCollector:
         to_dt = from_dt + timedelta(days=days)
 
         if to_dt.date() >= datetime.today().date():
-            to_dt = datetime.now()
+            to_dt = datetime.now() - timedelta(days=1)
 
         url = f"{self.host}/{self.version}/instruments/{instrument}/candles"
 
@@ -37,13 +37,20 @@ class CandleCollector:
         if r.status_code == 200:
             res_list = []
             for candle in r.json()["candles"]:
-                candle = Candle(
-                    open=candle["mid"]["o"],
-                    high=candle["mid"]["h"],
-                    low=candle["mid"]["l"],
-                    close=candle["mid"]["c"],
-                    starting_time=candle["time"],
-                )
+                candle = {
+                    "open": candle["mid"]["o"],
+                    "high": candle["mid"]["h"],
+                    "low": candle["mid"]["l"],
+                    "close": candle["mid"]["c"],
+                    "starting_time": candle["time"],
+                }
+                # candle = Candle(
+                #     open=candle["mid"]["o"],
+                #     high=candle["mid"]["h"],
+                #     low=candle["mid"]["l"],
+                #     close=candle["mid"]["c"],
+                #     starting_time=candle["time"],
+                # )
                 res_list.append(candle)
             return res_list
         else:
