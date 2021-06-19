@@ -38,11 +38,15 @@ class CandleCollector:
             res_list = []
             for candle in r.json()["candles"]:
                 candle = {
-                    "open": candle["mid"]["o"],
-                    "high": candle["mid"]["h"],
-                    "low": candle["mid"]["l"],
-                    "close": candle["mid"]["c"],
+                    "Open": float(candle["mid"]["o"]),
+                    "High": float(candle["mid"]["h"]),
+                    "Low": float(candle["mid"]["l"]),
+                    "Close": float(candle["mid"]["c"]),
                     "starting_time": candle["time"],
+                    "Date": datetime.strptime(
+                        candle["time"], "%Y-%m-%dT%H:%M:%S.%f000Z"
+                    )
+                    + timedelta(days=1),
                 }
                 # candle = Candle(
                 #     open=candle["mid"]["o"],
